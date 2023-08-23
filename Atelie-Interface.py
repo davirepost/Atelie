@@ -37,6 +37,51 @@ while True:
             else:
                 break  
 
+ def atualizar():
+        if event == "ATUALIZAR INFORMAÇÃO DE FUNCIONÁRIO":
+            nome= sg.popup_get_text ('Digite o nome do funcionário')
+            if nome in funcionario:
+
+                layout= [
+                    [sg.Text('Atualizar informações de funcionário')],
+                    [sg.Text(f'Nome: {nome}')],
+                    [sg.Checkbox('Atualizar Nome', Keys='Nome')],
+                    [sg.Checkbox('Atualizar E-mail', Keys='E-mail')],
+                    [sg.Checkbox('Atualizar Senha', Keys='Senha')],
+                    [sg.Button ('Atualizar', sg.Button('Cancelar'))]
+
+                ]
+                update_window= sg.Window('Atualizar dados do(a) funcionário(a)', layout)
+
+                while True:
+                    update_event, update_values= update_window.read()
+                    if update_event== sg.WIN_CLOSED or update_event == 'Cancelar':
+                        break
+                    if update_event== 'Atualizar':
+                        if update_values['Nome']:
+                            novo_nome= sg.popup_get_text(f'Digite o novo nome {nome}')
+                            funcionario[novo_nome]=funcionario.pop(nome)
+                            nome= novo_nome
+                        if update_values['E-mail']:
+                            email= sg.popup_get_text(f'Digite o novo e-mail')
+                            funcionario[nome]['E-mail']= email
+                        if update_values['Senha']:
+                            senha=sg.popup_get_text(f'Digite a nova senha')
+                            funcionario[nome]['Senha']= senha
+                        sg.popup(f'As informações do(a) funcionário(a) {nome} foram atualizados!')
+                        update_window.Close()
+                        break
+                    else:
+                        sg.popup(f'O Funcionário com o nome {nome} não foi encontrada')
+
+
+
+
+
+
+        
+            
+
 
         
             
