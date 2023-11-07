@@ -4,6 +4,7 @@ from tkinter import messagebox
 
 # Função para salvar medidas
 def salvar_medidas():
+    from Menu import abrir_cadastrar_clientes
     global medidas_window
     medidas_window.destroy()
 

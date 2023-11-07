@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 
 def criar_menu():
+    
     from Atelie import entrar
 # Função para abrir a tela de clientes cadastrados
     def abrir_clientes_cadastrados():
@@ -38,5 +39,8 @@ def criar_menu():
     botao_pedidos = ttk.Button(menu_opcoes, text="Pedidos", command=abrir_pedidos)
     botao_pedidos.pack(pady=20)
 
+   
+
     # Iniciar o loop principal da janela
     menu_opcoes.mainloop()
+    
