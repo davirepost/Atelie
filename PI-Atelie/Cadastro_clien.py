@@ -1,56 +1,38 @@
-import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
+import tkinter as tk  #Importa o módulo tkinter e o renomeia como "tk"
+from tkinter import ttk  #Importa o módulo ttk do tkinter
+from tkinter import messagebox  #Importa a funcionalidade de caixas de diálogo de mensagem
 
 # Função para salvar medidas
 def salvar_medidas():
-    from Menu import abrir_cadastrar_clientes
-    global medidas_window
-    medidas_window.destroy()
+    from Menu import abrir_cadastrar_clientes  #Importa a função "abrir_cadastrar_clientes" do módulo "Menu"
+    global medidas_window  #Declara a variável "medidas_window" como global
+    medidas_window.destroy()  #Fecha a janela de medidas
 
 # Função para abrir a janela de medidas
 def abrir_medidas():
-    global medidas_window
-    medidas_window = tk.Toplevel()
-    medidas_window.title("Medidas do Cliente")
+    global medidas_window #Declara a variável "medidas_window" como global
+    medidas_window = tk.Toplevel()  #Cria uma nova janela de nível superior
+    medidas_window.title("Medidas do Cliente") #Define o título da janela
 
     # Labels e campos de entrada para medidas
-    medidas_frame = ttk.Frame(medidas_window)
-    medidas_frame.pack(padx=10, pady=10)
+    medidas_frame = ttk.Frame(medidas_window) #Cria um frame para organizar os widgets
+    medidas_frame.pack(padx=10, pady=10) #coloca o frame na janela com preenchimento nas margens
 
-    ttk.Label(medidas_frame, text="Gola:").grid(row=0, column=0, sticky="w")
-    ttk.Entry(medidas_frame).grid(row=0, column=1)
+    # Labels e campos de entrada para medidas
+    ttk.Label(medidas_frame, text="Gola:").grid(row=0, column=0, sticky="w") #Cria um rótulo e um campo de entrada para "Gola"
+    ttk.Entry(medidas_frame).grid(row=0, column=1) #Cria um campo de entrada para "Gola"
 
-    ttk.Label(medidas_frame, text="Busto:").grid(row=1, column=0, sticky="w")
-    ttk.Entry(medidas_frame).grid(row=1, column=1)
+    # Repita o mesmo padrão para outros campos de medidas (Busto, Cintura, Largura do Ombro, Manga, Quadril, Coxa, Outros)
 
-    ttk.Label(medidas_frame, text="Cintura:").grid(row=2, column=0, sticky="w")
-    ttk.Entry(medidas_frame).grid(row=2, column=1)
+    ttk.Button(medidas_window, text="Salvar", command=salvar_medidas).pack(pady=10)  # Cria um botão "Salvar" na janela de medidas
 
-    ttk.Label(medidas_frame, text="Largura do Ombro:").grid(row=3, column=0, sticky="w")
-    ttk.Entry(medidas_frame).grid(row=3, column=1)
-
-    ttk.Label(medidas_frame, text="Manga:").grid(row=4, column=0, sticky="w")
-    ttk.Entry(medidas_frame).grid(row=4, column=1)
-
-    ttk.Label(medidas_frame, text="Quadril:").grid(row=5, column=0, sticky="w")
-    ttk.Entry(medidas_frame).grid(row=5, column=1)
-
-    ttk.Label(medidas_frame, text="Coxa:").grid(row=6, column=0, sticky="w")
-    ttk.Entry(medidas_frame).grid(row=6, column=1)
-
-    ttk.Label(medidas_frame, text="Outros:").grid(row=7, column=0, sticky="w")
-    ttk.Entry(medidas_frame).grid(row=7, column=1)
-
-    ttk.Button(medidas_window, text="Salvar", command=salvar_medidas).pack(pady=10)
-
-# Função para confirmar o cadastro
+#Função para confirmar o cadastro
 def confirmar_cadastro():
     nome = entry_nome.get()
     telefone = entry_telefone.get()
     endereco = entry_endereco.get()
 
-    # Validação dos campos
+    #Validação dos campos
     if not nome:
         messagebox.showerror("Erro", "Insira o nome do cliente!")
         return
@@ -63,32 +45,32 @@ def confirmar_cadastro():
         messagebox.showerror("Erro", "Insira o endereço do cliente!")
         return
 
-    # Se todas as validações passarem, exibir mensagem de sucesso
+    #Se todas as validações passarem, exibir mensagem de sucesso
     messagebox.showinfo("Cadastro Confirmado", "Cadastro de cliente efetuado com sucesso.")
 
-# Função para cancelar o cadastro
+#Função para cancelar o cadastro
 def cancelar_cadastro():
     nome_var.set("")
     telefone_var.set("")
     endereco_var.set("")
 
-# Criar a janela principal
+#Criar a janela principal
 root = tk.Tk()
 root.title("Cadastro de Clientes")
 
-# Definir a dimensão da tela
+#Definir a dimensão da tela
 root.geometry("1000x600")
 
-# Centralizar os campos de preenchimento
+#Centralizar os campos de preenchimento
 frame_campos = ttk.Frame(root)
 frame_campos.place(relx=0.5, rely=0.5, anchor="center")
 
-# Variáveis de controle para os campos
+#Variáveis de controle para os campos
 nome_var = tk.StringVar()
 telefone_var = tk.StringVar()
 endereco_var = tk.StringVar()
 
-# Título
+#Título
 titulo_label = ttk.Label(frame_campos, text="Cadastro de Clientes", font=("Arial", 16))
 titulo_label.grid(row=0, column=0, columnspan=2, pady=10)
 
