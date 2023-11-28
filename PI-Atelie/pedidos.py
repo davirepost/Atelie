@@ -1,31 +1,63 @@
-import tkinter as tk  # Importa o módulo tkinter e renomeia-o como "tk"
-from tkinter import Tk  # Importa a classe Tk do tkinter (não é necessário)
+from tkinter import ttk
+import tkinter as tk
+from tkinter import messagebox
+import mysql.connector
 
-# Função para lidar com pedidos
-def pedidos():
-    # Importa a função "abrir_pedidos" do módulo "Menu"
-    from Menu import abrir_pedidos 
+def abrir_pedidos():
+    conexao = mysql.connector.connect(
+        host="127.0.0.1",
+        port=3306,
+        user='root',
+        password='',
+        database='atelie'
+    )
+    cursor = conexao.cursor()
 
-    # Cria uma nova janela para pedidos
-    pedido = tk.Tk()  # Cria uma instância da classe Tk do tkinter para a tela de pedidos
-    pedido.geometry("1000x600")  # Define as dimensões da janela para 1000x600 pixels
-    pedido.title('Pedidos')  # Define o título da janela
+    pedido = tk.Tk()
+    pedido.geometry("1000x600")
+    pedido.title('Pedidos')
 
-    texto = tk.Label(pedido, text="", font="Arial")  # Cria um rótulo vazio
-    botao = tk.Button(pedido, text="Lista de Pedidos", command=clique)  # Cria um botão para exibir uma lista de pedidos e associa a função "clique" ao botão
-    botao.grid(padx=10, pady=10)  # Coloca o botão na janela com preenchimento
+    # Definir variáveis globais
+    entry_descricao = ttk.Entry(pedido)
+    entry_data_entrega = ttk.Entry(pedido)
+    entry_status = ttk.Entry(pedido)
 
-    botao = tk.Button(pedido, text="Cadastrar Pedidos", command=clique_2)  # Cria um botão para cadastrar pedidos e associa a função "clique_2" ao botão
-    botao.grid(padx=10, pady=10)  # Coloca o botão na janela com preenchimento
+    def clique_2():
+        # Acessar as variáveis globais
+        descricao = entry_descricao.get()
+        data_entrega = entry_data_entrega.get()
+        status = entry_status.get()
 
-    pedido.mainloop()  # Inicia o loop principal da interface gráfica da tela de pedidos
+        comando = "INSERT INTO `pedido`(`descricao`, `data_entrega`, `status`) VALUES (%s, %s, %s)"
+        values = (descricao, data_entrega, status)
+        cursor.execute(comando, values)
+        conexao.commit()
+        messagebox.showinfo("Sucesso", "Pedido cadastrado com sucesso!")
 
-# Função associada ao botão "Lista de Pedidos"
-def clique():
-    # Você pode adicionar a lógica para listar os pedidos aqui
-    print("isso ai")
+    def abrir_lista_pedidos():
 
-# Função associada ao botão "Cadastrar Pedidos"
-def clique_2():
-    # Você pode adicionar a lógica para cadastrar pedidos aqui
-    print("isso ai 2")
+        comando= "SELECT `descricao`, `data_entrega`, `status` FROM `pedido`"
+        
+        try:
+            cursor.execute(comando)
+            resultados= cursor.fetchall()
+
+            for resultado in resultados:
+                descricao, data_entrega, status= resultado
+        finally:
+            cursor.close()
+            conexao.close()
+    # Aqui você pode adicionar o código para abrir a lista de pedidos
+   
+    # Botão para cadastrar pedidos
+    botao_cadastrar = tk.Button(pedido, text="Cadastrar Pedidos", command=clique_2)
+    botao_cadastrar.grid(padx=10, pady=10)
+
+    # Botão para listar pedidos
+    botao_lista = tk.Button(pedido, text="Lista de Pedidos", command=abrir_lista_pedidos)
+    botao_lista.grid(padx=10, pady=10)
+
+    pedido.mainloop()
+
+# Chamar a função para abrir a janela de pedidos
+abrir_pedidos()

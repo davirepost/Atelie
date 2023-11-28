@@ -1,105 +1,112 @@
-import tkinter as tk  #Importa o módulo tkinter e o renomeia como "tk"
-from tkinter import ttk  #Importa o módulo ttk do tkinter
-from tkinter import messagebox  #Importa a funcionalidade de caixas de diálogo de mensagem
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+import mysql.connector
 
-# Função para salvar medidas
-def salvar_medidas():
-    from Menu import abrir_cadastrar_clientes  #Importa a função "abrir_cadastrar_clientes" do módulo "Menu"
-    global medidas_window  #Declara a variável "medidas_window" como global
-    medidas_window.destroy()  #Fecha a janela de medidas
+def confirmar_cadastro(nome_var, endereco_var, telefone_var, gola_var, busto_var, cintura_var, largura_ombro_var, manga_var, quadril_var, coxa_var, outros_var):
+    # Inicializa a conexão com o banco de dados e o cursor
+    conexao = mysql.connector.connect(
+        host="127.0.0.1",
+        port=3306,
+        user='root',
+        password='',
+        database='atelie'
+    )
+    cursor = conexao.cursor()
 
-# Função para abrir a janela de medidas
+    nome = nome_var.get()
+    endereco = endereco_var.get()
+    telefone = telefone_var.get()
+    gola= gola_var.get()
+    busto= busto_var.get()
+    cintura= cintura_var.get()
+    largura_ombro= largura_ombro_var.get()
+    manga= manga_var.get()
+    quadril= quadril_var.get()
+    coxa= coxa_var.get()
+    outros=outros_var.get()
+    
+    if not nome or not endereco or not telefone:
+        messagebox.showerror("Erro", "Preencha todos os campos obrigatórios.")
+        return
+
+    try:
+        comando = "INSERT INTO `cliente`(`nome`, `endereco`, `telefone`, `gola`, `busto`, `cintura`, `largura_ombro`, `manga`, `quadril`, `coxa`, `outros`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        values = (nome, endereco, telefone, gola, busto, cintura, largura_ombro, manga, quadril, coxa, outros)
+        cursor.execute(comando, values)
+        conexao.commit()
+        messagebox.showinfo("Cadastro Confirmado", "Cadastro efetuado com sucesso.")
+    except mysql.connector.Error as err:
+        messagebox.showerror("Erro no Banco de Dados", f"Erro: {err}")
+
 def abrir_medidas():
-    global medidas_window #Declara a variável "medidas_window" como global
-    medidas_window = tk.Toplevel()  #Cria uma nova janela de nível superior
-    medidas_window.title("Medidas do Cliente") #Define o título da janela
+    medidas_window = tk.Toplevel()
+    medidas_window.title("Medidas do Cliente")
 
-    # Labels e campos de entrada para medidas
-    medidas_frame = ttk.Frame(medidas_window) #Cria um frame para organizar os widgets
-    medidas_frame.pack(padx=10, pady=10) #coloca o frame na janela com preenchimento nas margens
+    medidas_frame = ttk.Frame(medidas_window)
+    medidas_frame.pack(padx=20, pady=20)
 
-    # Labels e campos de entrada para medidas
-    ttk.Label(medidas_frame, text="Gola:").grid(row=0, column=0, sticky="w") #Cria um rótulo e um campo de entrada para "Gola"
-    ttk.Entry(medidas_frame).grid(row=0, column=1) #Cria um campo de entrada para "Gola"
+    labels = ["Gola", "Busto", "Cintura", "Largura do Ombro", "Manga", "Quadril", "Coxa", "Outros"]
+    variables = [tk.StringVar() for _ in range(len(labels))]
 
-    # Repita o mesmo padrão para outros campos de medidas (Busto, Cintura, Largura do Ombro, Manga, Quadril, Coxa, Outros)
+    for row, label in enumerate(labels, start=1):
+        ttk.Label(medidas_frame, text=f"{label}:").grid(row=row, column=0, sticky="w")
+        ttk.Entry(medidas_frame, textvariable=variables[row-1]).grid(row=row, column=1, sticky="w")
 
-    ttk.Button(medidas_window, text="Salvar", command=salvar_medidas).pack(pady=10)  # Cria um botão "Salvar" na janela de medidas
+    ttk.Button(medidas_window, text="Salvar", command=lambda: salvar_medidas(*variables)).pack(pady=10)
 
-#Função para confirmar o cadastro
-def confirmar_cadastro():
-    nome = entry_nome.get()
-    telefone = entry_telefone.get()
-    endereco = entry_endereco.get()
+def salvar_medidas(*variables):
+    # Adapte conforme necessário para processar e salvar as medidas
+   messagebox.showerror("medidas salvas com sucesso")
 
-    #Validação dos campos
-    if not nome:
-        messagebox.showerror("Erro", "Insira o nome do cliente!")
-        return
+def main():
+    root = tk.Tk()
+    root.title("Cadastro de Clientes")
+    root.geometry("1000x600")
 
-    if not telefone:
-        messagebox.showerror("Erro", "Insira o telefone do cliente!")
-        return
+    frame_campos = ttk.Frame(root)
+    frame_campos.pack(padx=20, pady=20)
 
-    if not endereco:
-        messagebox.showerror("Erro", "Insira o endereço do cliente!")
-        return
+    nome_var = tk.StringVar()
+    endereco_var = tk.StringVar()
+    telefone_var = tk.StringVar()
 
-    #Se todas as validações passarem, exibir mensagem de sucesso
-    messagebox.showinfo("Cadastro Confirmado", "Cadastro de cliente efetuado com sucesso.")
+    gola_var = tk.StringVar()
+    busto_var = tk.StringVar()
+    cintura_var = tk.StringVar()
+    largura_ombro_var = tk.StringVar()
+    manga_var = tk.StringVar()
+    quadril_var = tk.StringVar()
+    coxa_var = tk.StringVar()
+    outros_var = tk.StringVar()
 
-#Função para cancelar o cadastro
-def cancelar_cadastro():
-    nome_var.set("")
-    telefone_var.set("")
-    endereco_var.set("")
+    titulo_label = ttk.Label(frame_campos, text="Cadastro de Clientes", font=("Arial", 16))
+    titulo_label.grid(row=0, column=0, columnspan=2, pady=10)
 
-#Criar a janela principal
-root = tk.Tk()
-root.title("Cadastro de Clientes")
+    campos = [
+        ("Nome:", nome_var, 1),
+        ("Endereço:", endereco_var, 3),
+        ("Telefone:", telefone_var, 2),
+    ]
 
-#Definir a dimensão da tela
-root.geometry("1000x600")
+    for label_text, var, row in campos:
+        ttk.Label(frame_campos, text=label_text).grid(row=row, column=0, sticky="w")
+        ttk.Entry(frame_campos, textvariable=var).grid(row=row, column=1, sticky="w")
 
-#Centralizar os campos de preenchimento
-frame_campos = ttk.Frame(root)
-frame_campos.place(relx=0.5, rely=0.5, anchor="center")
+    botao_medidas = ttk.Button(frame_campos, text="Medidas", command=abrir_medidas)
+    botao_medidas.grid(row=4, column=0, columnspan=2, pady=10)
 
-#Variáveis de controle para os campos
-nome_var = tk.StringVar()
-telefone_var = tk.StringVar()
-endereco_var = tk.StringVar()
+    botao_confirmar = ttk.Button(frame_campos, text="Confirmar Cadastro",
+                                 command=lambda: confirmar_cadastro(nome_var, endereco_var, telefone_var,
+                                                                    gola_var, busto_var, cintura_var,
+                                                                    largura_ombro_var, manga_var, quadril_var,
+                                                                    coxa_var, outros_var))
+    botao_confirmar.grid(row=5, column=0, columnspan=2)
 
-#Título
-titulo_label = ttk.Label(frame_campos, text="Cadastro de Clientes", font=("Arial", 16))
-titulo_label.grid(row=0, column=0, columnspan=2, pady=10)
+    botao_cancelar = ttk.Button(frame_campos, text="Cancelar Cadastro", command=root.destroy)
+    botao_cancelar.grid(row=6, column=0, columnspan=2)
 
-# Labels e campos de entrada
-label_nome = ttk.Label(frame_campos, text="Nome:")
-label_nome.grid(row=1, column=0, sticky="w")
-entry_nome = ttk.Entry(frame_campos, textvariable=nome_var)
-entry_nome.grid(row=1, column=1, sticky="w")
+    root.mainloop()
 
-label_telefone = ttk.Label(frame_campos, text="Telefone:")
-label_telefone.grid(row=2, column=0, sticky="w")
-entry_telefone = ttk.Entry(frame_campos, textvariable=telefone_var)
-entry_telefone.grid(row=2, column=1, sticky="w")
-
-label_endereco = ttk.Label(frame_campos, text="Endereço:")
-label_endereco.grid(row=3, column=0, sticky="w")
-entry_endereco = ttk.Entry(frame_campos, textvariable=endereco_var)
-entry_endereco.grid(row=3, column=1, sticky="w")
-
-# Botão de medidas
-botao_medidas = ttk.Button(frame_campos, text="Medidas", command=abrir_medidas)
-botao_medidas.grid(row=4, column=0, columnspan=2, pady=10)
-
-# Botões de ação
-botao_confirmar = ttk.Button(frame_campos, text="Confirmar Cadastro", command=confirmar_cadastro)
-botao_confirmar.grid(row=5, column=0, columnspan=2)
-
-botao_cancelar = ttk.Button(frame_campos, text="Cancelar Cadastro", command=cancelar_cadastro)
-botao_cancelar.grid(row=6, column=0, columnspan=2)
-
-# Iniciar o loop principal da janela
-root.mainloop()
+if __name__ == "__main__":
+    main()
